@@ -57,7 +57,7 @@ def train(args):
                     save_every=args.save_every
                 )
         ensemble.append(agent)
-
+        
     opponents = [RandomAgent(num_actions=env.num_actions) for _ in range(env.num_players - 1)]
     env.set_agents(ensemble) 
 
