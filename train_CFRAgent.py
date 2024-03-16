@@ -3,6 +3,8 @@ from rlcard.agents import CFRAgent
 import pandas as pd
 import numpy as np
 
+# Trains the CFR Agent, saves it to specified filepath
+
 # Initialize the environment
 env = rlcard.make('leduc-holdem', config={'allow_step_back': True})
 
@@ -13,7 +15,7 @@ custom_model_path = '/Users/charlieabowd/229PokerProphet'  # Change this to your
 agent = CFRAgent(env, model_path=custom_model_path)
 
 # Define the number of training iterations
-num_iterations = 1000
+num_iterations = 10000
 
 # Training loop
 for i in range(num_iterations):

@@ -1,12 +1,21 @@
 import rlcard
-from rlcard.agents import RandomAgent
+from rlcard.agents import CFRAgent
 import pandas as pd
 import numpy as np
 
+# Plays 1000 games of Leduc holdem with 2 CFR agents, stores results in df
+
 # Initialize the environment and agents
-env = rlcard.make('leduc-holdem')
+env = rlcard.make('leduc-holdem', config={'allow_step_back': True})
+
+# path where I stored my pretrained model
+cfr_model_path = '/Users/charlieabowd/229PokerProphet'
+# load the agent 
+CFR_agent = CFRAgent(env, model_path = cfr_model_path)
+CFR_agent.load()
+
 num_players = 2
-random_agents = [RandomAgent(env.num_actions) for _ in range(num_players)]
+random_agents = [CFR_agent for _ in range(num_players)]
 env.set_agents(random_agents)
 
 # Update columns to match the structure of each row in data
@@ -46,9 +55,11 @@ for game_id in range(1000):
         row = [game_id, env.timestep, current_player] + current_state['obs'].tolist() + legal_actions_binary + [action]
         #add do the list
         data.append(row)
+    
 
 # Create a DataFrame from the collected data
 df = pd.DataFrame(data, columns=column_names)
+df.to_csv('/Users/charlieabowd/229PokerProphet/CFR_training_data.csv', index=False)  # Set index=False if you don't want to save the index
 
 # Display the first few rows of the DataFrame
 print(df.head())
