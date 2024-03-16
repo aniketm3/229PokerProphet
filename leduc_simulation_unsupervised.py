@@ -4,8 +4,8 @@ import pandas as pd
 import numpy as np
 
 # Plays 1000 games of Leduc holdem with 2 CFR agents, stores results in df
-
-# Initialize the environment and agents
+print("Run 1000 games")
+# Initialize environment and agents
 env = rlcard.make('leduc-holdem', config={'allow_step_back': True})
 
 # path where I stored my pretrained model
@@ -38,28 +38,20 @@ for game_id in range(1000):
     while not done:
         current_player = env.get_player_id()
         current_state = env.get_state(current_player)
-        
         # Determine action using the agent's step or eval_step method
         action, _ = random_agents[current_player].eval_step(current_state)
-        
-        # Proceed with the environment step using the chosen action
         next_state, player_id = env.step(action)
-        
         # Check if the game is done
         done = env.is_over()
-    
-        # Get binary representation of legal actions (out of 3 possible)
+        # Get binary rep. of legal actions
         legal_actions_binary = [1 if i in current_state['legal_actions'] else 0 for i in range(3)]
-        
         # Flatten 'obs' and combine with legal actions and other info
         row = [game_id, env.timestep, current_player] + current_state['obs'].tolist() + legal_actions_binary + [action]
-        #add do the list
+        # add do the list
         data.append(row)
     
 
-# Create a DataFrame from the collected data
+# Create a df from the collected data
 df = pd.DataFrame(data, columns=column_names)
 df.to_csv('/Users/charlieabowd/229PokerProphet/CFR_training_data.csv', index=False)  # Set index=False if you don't want to save the index
-
-# Display the first few rows of the DataFrame
 print(df.head())
